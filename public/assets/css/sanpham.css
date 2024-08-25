@@ -1,0 +1,180 @@
+.hero {
+    background: url('/assets/images/sofa.png') no-repeat;
+    background-position: right;
+    color: #fff;
+    background-color: #3b5d50;
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+.sidebar {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h4 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.sidebar .form-group {
+    margin-bottom: 15px;
+}
+
+.sidebar .form-control {
+    border-radius: 5px;
+}
+
+.sidebar .btn-search {
+    background-color: #28a745;
+    color: #fff;
+    border-radius: 5px;
+    font-weight: bold;
+    width: 100%;
+}
+
+.sidebar .btn-search:hover {
+    background-color: #218838;
+}
+
+.product-item .imgpr{
+    height: 300px;
+}
+.product-item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.product-thumbnail {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.product-sale {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ff5722;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 1.125rem;
+    font-weight: bold;
+    z-index: 2;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.product-price {
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+}
+
+.product-price.del {
+    color: #888;
+    font-size: 1rem;
+    text-decoration: line-through;
+}
+.product-item a{
+    text-decoration: none;
+}
+.product-title {
+    font-size: 1.25rem;
+    margin: 10px 0;
+    text-decoration: none;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.4;
+    text-align: center;
+    height: 50px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.icon-cross {
+display: block;
+margin-top: 10px;
+text-align: center;
+background-color: #28a745;
+color: #fff;
+padding: 10px;
+border-radius: 5px;
+font-weight: bold;
+transition: background-color 0.3s ease;
+text-transform: uppercase;
+}
+
+.icon-cross:hover {
+background-color: #218838;
+}
+
+.icon-cross img {
+width: 20px;
+height: 20px;
+vertical-align: middle;
+margin-right: 5px;
+}
+
+.icon-cross:hover img {
+transform: rotate(90deg);
+transition: transform 0.3s ease;
+}
+.sidebar h4 {
+font-size: 1.5rem;
+font-weight: bold;
+margin-bottom: 20px;
+color: #28a745;
+text-transform: uppercase;
+}
+
+.sidebar .list-group-item {
+background-color: #f8f9fa;
+border: none;
+padding: 10px 15px;
+margin-bottom: 10px;
+border-radius: 5px;
+transition: all 0.3s ease;
+}
+
+.sidebar .list-group-item a {
+color: #333;
+text-decoration: none;
+font-weight: bold;
+}
+
+.sidebar .list-group-item a:hover {
+color: #28a745;
+text-decoration: underline;
+}
+
+.sidebar .list-group-item:hover {
+background-color: #e9ecef;
+transform: translateY(-2px);
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar .list-group-item.active {
+background-color: #28a745;
+color: #fff;
+}
+
+.sidebar .list-group-item.active a {
+color: #fff;
+}
