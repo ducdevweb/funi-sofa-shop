@@ -105,7 +105,7 @@ class AdminUser extends Controller
         $user = User::find($id);
 
         if ($user) {
-            // Đổi trạng thái block
+     
             $user->status = ($user->status == 0) ? 1 : 0;
             $user->save();
         }
