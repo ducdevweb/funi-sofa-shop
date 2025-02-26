@@ -12,8 +12,8 @@
 
 {{-- Intro Lines --}}
 @foreach ($introLines as $line)
+{{ $line }}
 
-Xin chào bạn đã đến với trình xác nhận email
 @endforeach
 
 {{-- Action Button --}}
@@ -31,15 +31,15 @@ Xin chào bạn đã đến với trình xác nhận email
 
 {{-- Outro Lines --}}
 @foreach ($outroLines as $line)
+{{ $line }}
 
-Cảm ơn quý khách đã ghé qua 
 @endforeach
 
 {{-- Salutation --}}
 @if (! empty($salutation))
-Đức
+{{ $salutation }}
 @else
-@lang('Regards'),<br>
+@lang('Regards,')<br>
 {{ config('app.name') }}
 @endif
 
@@ -47,12 +47,12 @@ Cảm ơn quý khách đã ghé qua
 @isset($actionText)
 <x-slot:subcopy>
 @lang(
-    "Nếu bạn có bất kì thắc mắc gì hãy nhấn thao đường link dưới đây để được hỗ trợ".
+    "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\n".
     'into your web browser:',
     [
         'actionText' => $actionText,
     ]
-) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
+) <span class="break-all">[{{ $actionUrl }}]({{ $actionUrl }})</span>
 </x-slot:subcopy>
 @endisset
 </x-mail::message>

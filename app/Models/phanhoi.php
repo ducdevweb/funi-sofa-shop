@@ -10,5 +10,5 @@ class phanhoi extends Model
     use HasFactory;
     protected $table='phanhoi';
     protected $primaryKey='id_ph';
-    public $fillable=['id_user','ho_ten','loi_nhan','ngay_gui'];
+    public $fillable=['id_user','da_xu_ly','ho_ten','loi_nhan','ngay_gui'];
 }

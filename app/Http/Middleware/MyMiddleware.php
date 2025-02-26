@@ -18,15 +18,15 @@ class MyMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::guard('admin')->user();
+        $user = Auth::guard('sanctum')->user();
 
-        if ($user && $user->role == 0) {
+        if ($user && $user->role === 0) {
             return $next($request);
         } else {
             $request->session()->put('prevurl', url()->current());
 
             return redirect()->route('admin.login')
-                ->with('thongbao', 'Bạn cần đăng nhập với vai trò admin để truy cập trang này.');
+                ->with('loginErr', 'Bạn cần đăng nhập với vai trò admin để truy cập trang này.');
     }
 
     }

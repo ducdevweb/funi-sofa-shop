@@ -13,13 +13,17 @@ class binhluan extends Model
     public $primaryKey='id_bl';
     protected $attributes=[];
     protected $date=['ngayDang'];
-    protected $fillable=['id_sp','id_nd','noiDung','anHien','ngayDang'];
-    public function binh_luan(): HasMany {
-        return $this->hasMany(User::class,'id');
-    }
+    protected $fillable=['id_sp','id_nd','noiDung','danhgia','anHien','da_xu_ly','ngayDang'];
     public function sanpham()
     {
         return $this->belongsTo(loai::class, 'id_sp');
     }
-
+    public function chitietdonhang()
+    {
+        return $this->belongsTo(chitietdonhang::class, 'maBl', 'maBl'); 
+    }
+    public function phanhois()
+    {
+        return $this->hasMany(phanhoi_bl::class, 'id_bl','id_bl');
+    }
 }

@@ -110,7 +110,7 @@
         </li>
         @else
         <li class="nav-item">
-          <a class="nav-link" href="/dangnhap">Đăng nhập</a>
+          <a class="nav-link" href="{{route('user.login')}}">Đăng nhập</a>
         </li>
         @endif
         <li class="nav-item cart-icon">

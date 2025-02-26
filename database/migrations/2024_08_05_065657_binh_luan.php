@@ -15,10 +15,13 @@ return new class extends Migration
             $table->id('id_bl');
             $table->integer('id_nd');
             $table->string('ten_nd');
+            $table->string('hinh_bl')->nullable();
+            $table->boolean('da_rep')->default(0);
             $table->integer('id_sp');
             $table->string('noiDung');
+            $table->integer('danhgia');
             $table->boolean('anHien')->default(1);
-            $table->timestamp('ngayDang')->nullable(); 
+            $table->timestamp('ngayDang'); 
             $table->timestamps(); 
         });
         

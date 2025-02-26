@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('loai_sp', function (Blueprint $table){
             $table->increments('id_loaisp');
+            $table->integer('thu_tu');
             $table->string('loai',50);
+            $table->string('hinh')->nullable();
             $table->timestamps();
         });
     }

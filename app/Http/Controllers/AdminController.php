@@ -1,132 +1,151 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\chitietdonhang;
 use App\Models\donhang;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view("admin.layout_admin");
+        $year = $request->input('year', now()->year);
+        $sanpham = DB::table('sanpham')->orderBy('luot_mua', 'desc')->limit(6)->get();
+        $query = DB::table('chitiet')
+            ->where('thanhToan', 1)
+            ->whereYear('ngayNhan', $year)
+            ->join('sanpham', 'chitiet.id_sp', '=', 'sanpham.id_sp')
+            ->select(
+                DB::raw('MONTH(chitiet.ngayNhan) as month'),
+                DB::raw('SUM(chitiet.tongTien) as thanh_tien')
+            )
+            ->groupBy(DB::raw('MONTH(chitiet.ngayNhan)'));
+
+        $doanhthu = $query->orderBy('month')->get();
+
+        $doanhthu_12thang = array_fill(1, 12, 0);
+        foreach ($doanhthu as $thang) {
+            $doanhthu_12thang[$thang->month] = $thang->thanh_tien;
+        }
+        $doanhthu_12thang = array_values($doanhthu_12thang);
+
+        $doanhthu_thang_nay = DB::table('chitiet')
+            ->where('thanhtoan', 1)
+            ->whereMonth('ngayNhan', now()->month)
+            ->sum('tongTien');
+
+        $doanhthu_thang_truoc = DB::table('chitiet')
+            ->where('thanhtoan', 1)
+            ->whereMonth('ngayNhan', now()->subMonth()->month)
+            ->sum('tongTien');
+
+        $doanhthu_thang_truoc_nua = DB::table('chitiet')
+            ->where('thanhtoan', 1)
+            ->whereMonth('ngayNhan', now()->subMonth(2)->month)
+            ->sum('tongTien');
+
+        $ti_le = 0;
+        if ($doanhthu_thang_truoc > 0) {
+            $ti_le = round($doanhthu_thang_nay > $doanhthu_thang_truoc
+                ? ($doanhthu_thang_nay - $doanhthu_thang_truoc) / $doanhthu_thang_truoc * 100
+                : ($doanhthu_thang_truoc - $doanhthu_thang_nay) / $doanhthu_thang_nay * 100);
+        }
+
+        $ti_le2 = 0;
+        if ($doanhthu_thang_truoc_nua > 0) {
+            $ti_le2 = round($doanhthu_thang_truoc > $doanhthu_thang_truoc_nua
+                ? ($doanhthu_thang_truoc - $doanhthu_thang_truoc_nua) / $doanhthu_thang_truoc_nua * 100
+                : ($doanhthu_thang_truoc_nua - $doanhthu_thang_truoc) / $doanhthu_thang_truoc_nua * 100);
+        }
+        return response()->json([
+            'sanpham' => $sanpham,
+            'doanhthu_12thang' => $doanhthu_12thang,
+            'doanhthu_thang_nay' => $doanhthu_thang_nay,
+            'doanhthu_thang_truoc' => $doanhthu_thang_truoc,
+            'doanhthu_thang_truoc_nua' => $doanhthu_thang_truoc_nua,
+            'ti_le' => $ti_le,
+            'ti_le2' => $ti_le2,
+            'year' => $year,
+        ]);
     }
-    public function login_ad(){
+    public function dangnhap_ad()
+    {
         return view('admin.dangnhap_ad');
     }
-    public function home_ad(){
-        return view("admin.home_ad");
-    }
-    public function check_login_ad(Request $request)
+    public function login_ad(Request $request)
     {
-        if (Auth::guard('admin')->attempt(['email' => $request->email, 'password' => $request->password])) {
+        $check_account = $request->only('email', 'password');
+
+        if (Auth::guard('admin')->attempt($check_account)) {
             $user = Auth::guard('admin')->user();
             if ($user->role == 0) {
-                return redirect()->route('admin.dashboard');
+                $token = $user->createToken('authToken')->plainTextToken;
+
+                $userInfo = [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'phone' => $user->phone,
+                    'address' => $user->address,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                ];
+
+                return response()->json([
+                    'message' => 'Đăng nhập thành công',
+                    'token' => $token,
+                    'user' => $userInfo,
+                ], 200);
             } else {
                 Auth::guard('admin')->logout();
-                return back()->withErrors(['loginErr' => 'Bạn không đủ quyền hạn để đăng nhập']);
+                return response()->json(['message' => 'Bạn không đủ quyền hạn để đăng nhập'], 403);
             }
-        } else {
-            return back()->withErrors(['loginErr' => 'Email hoặc mật khẩu không đúng']);
         }
-    }
-    
-    public function logout_ad()
-    {
-        Auth::guard('admin')->logout();
-        return redirect('/')->with('thongbao', 'Bạn đã thoát admin');
-    }
-    public function thongbao_ad(){
-        return view('admin.thongbaoadmin');
-    }
-    public function donhang(){
-        $donhangdathanhtoan=DB::table('donhang')->where('thanhToan',1)->orderBy('ngayMua','desc')->get();
-        $donhangchuathanhtoan=DB::table('donhang')->where('thanhToan',0)->orderBy('ngayMua','desc')->get();
-        return view('admin.donhang',compact('donhangdathanhtoan','donhangchuathanhtoan'));
+
+        return response()->json(['message' => 'Email hoặc mật khẩu không đúng'], 401);
     }
 
-    public function doanhthu(Request $request)
+
+    public function logout_ad(Request $request)
     {
-        $ngay_from = $request->input('ngay_from');
-        $ngay_to = $request->input('ngay_to');
-    
-        $query = DB::table('chitiet')
-            ->where('thanhToan',1)
-            ->join('sanpham', 'chitiet.id_sp', '=', 'sanpham.id_sp')
-            ->select('sanpham.ten_sp', 'sanpham.hinh', 'chitiet.gia_sp', DB::raw('SUM(chitiet.soLuong) as soLuong'), DB::raw('SUM(chitiet.tongTien) as thanh_tien'));
-    
-        if ($ngay_from) {
-            $query->whereDate('chitiet.ngayNhan', '>=', $ngay_from);
-        }
-        if ($ngay_to) {
-            $query->whereDate('chitiet.ngayNhan', '<=', $ngay_to);
-        }
-    
-        $query->groupBy('sanpham.ten_sp', 'sanpham.hinh', 'chitiet.gia_sp');
-    
-        $doanhthu = $query->get();
-        $tongdoanhthu = $doanhthu->sum('thanh_tien');
-    
-        return view('admin.doanhthu', compact('doanhthu', 'tongdoanhthu'));
-    }
-    public function doanhthuthieu(Request $request)
-    {
-        $ngay_from = $request->input('ngay_from');
-        $ngay_to = $request->input('ngay_to');
-    
-        $query = DB::table('chitiet')
-            ->where('thanhToan',0)
-            ->join('sanpham', 'chitiet.id_sp', '=', 'sanpham.id_sp')
-            ->select('sanpham.ten_sp', 'sanpham.hinh', 'chitiet.gia_sp', DB::raw('SUM(chitiet.soLuong) as soLuong'), DB::raw('SUM(chitiet.tongTien) as thanh_tien'));
-    
-        if ($ngay_from) {
-            $query->whereDate('chitiet.ngayNhan', '>=', $ngay_from);
-        }
-        if ($ngay_to) {
-            $query->whereDate('chitiet.ngayNhan', '<=', $ngay_to);
-        }
-    
-        $query->groupBy('sanpham.ten_sp', 'sanpham.hinh', 'chitiet.gia_sp');
-    
-        $doanhthuthieu = $query->get();
-        $tongdoanhthuthieu = $doanhthuthieu->sum('thanh_tien');
-    
-        return view('admin.doanhthuthieu', compact('doanhthuthieu', 'tongdoanhthuthieu'));
-    }
-    
-    
-    
-    public function block($id) {
- 
-        $user = User::find($id);
-        if ($user) {
-            $user->status = ($user->status == 0) ? 1 : 0;
-            $user->save();
-        }
-        return redirect()->back();
-    }
-    public function thanhtoan($id_dh = 0)
-    {
-        $thanhtoan = donhang::find($id_dh);
-        if ($thanhtoan) {
-            if ($thanhtoan->thanhToan == 0) {
-                $thanhtoan->thanhToan = 1; 
-            } else {
-                $thanhtoan->thanhToan = 0; 
+        try {
+            if ($request->user()) {
+                $request->user()->currentAccessToken()->delete();
             }
-            $thanhtoan->save();
-            ChiTietDonHang::where('id_dh', $id_dh)->update(['thanhToan' => $thanhtoan->thanhToan]);
+            Auth::guard('admin')->logout();
+            return response()->json(['message' => 'Đăng xuất thành công'], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Đã xảy ra lỗi khi đăng xuất.',
+                'message' => $e->getMessage()
+            ], 500);
         }
-    
-        return redirect()->back();
     }
-    
-    public function feedback(){
-        $feedback=DB::table('phanhoi')->orderBy('ngay_gui','desc')->get();
-        return view('admin.user_feedback',compact('feedback'));
+
+
+
+
+    public function feedback()
+    {
+        $feedback = DB::table('phanhoi')->orderBy('ngay_gui', 'desc')->get();
+        return response()->json($feedback);
+    }
+
+
+    // Verify Order (for ReactJS)
+    public function verify_order($id_dh = 0)
+    {
+        $donHang = donhang::find($id_dh);
+        if (!$donHang) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy đơn hàng.']);
+        }
+
+        $donHang->trangThai = 1;
+        $donHang->save();
+
+        return response()->json(['success' => true, 'message' => 'Cập nhật đơn hàng thành công.']);
     }
 }

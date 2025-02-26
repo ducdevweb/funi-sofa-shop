@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id('id_ph');
             $table->integer('id_user');
             $table->string('ho_ten');
+            $table->boolean('da_xu_ly')->default(0);
             $table->string('email');
             $table->longText('loi_nhan');
-            $table->dateTime('ngay_gui');
+            $table->timestamp('ngay_gui');
             $table->timestamps();
         });
     }

@@ -14,9 +14,9 @@ class loaiSp extends Seeder
     public function run(): void
     {
         DB::table('loai_sp')->insert([
-            ['loai'=>'giá rẻ'],
-            ['loai'=>'giảm sốc'],
-            ['loai'=>'cao cấp'],
+            ['loai'=>'Bàn ghế','thu_tu'=>1,'hinh'=>'/assets_ad/images/ban2.jpg'],
+            ['loai'=>'Giường ngủ','thu_tu'=>2,'hinh'=>'/assets_ad/images/hinh4.jpg'],
+            ['loai'=>'Tủ quần áo','thu_tu'=>3,'hinh'=>'/assets_ad/images/tu2.jpg'],
            ]);
     }
 }

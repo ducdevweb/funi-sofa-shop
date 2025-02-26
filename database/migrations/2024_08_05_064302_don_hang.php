@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id('id_dh');
             $table->integer('id_nd');
             $table->string('maDon');
-            $table->string('nguoiNhan');
+            $table->string('tenNguoiNhan');
+            $table->string('email');
             $table->integer('soDienThoai');
             $table->boolean('trangThai');
             $table->string('diaChi');
             $table->boolean('thanhToan')->default(0);
-            $table->string('hinhThanhToan')->nullable();
+            $table->boolean('Hinh_thuc')->default(0);
             $table->longText('ghiChu')->nullable();
             $table->timestamp('ngayMua');
             $table->timestamps(); 

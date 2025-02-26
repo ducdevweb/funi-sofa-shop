@@ -16,6 +16,7 @@ return [
     'defaults' => [
         'guard' => env('AUTH_GUARD', 'web'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        'email_verification' => true,
     ],
 
     /*
@@ -43,7 +44,8 @@ return [
         ],
     
         'admin' => [ 'driver' => 'session', 'provider' => 'users', ],
-
+        'nhanvien' => [ 'driver' => 'session', 'provider' => 'users', ],
+        'shipper' => [ 'driver' => 'session', 'provider' => 'users', ],
     ],
 
     /*
@@ -72,6 +74,7 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\KhachHang::class),
         ],
+        
     ],
 
     /*
