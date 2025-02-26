@@ -150,7 +150,23 @@ class AdminUser extends Controller
     {
         $xoa_user = User::where('id', $id)->exists();
         if ($xoa_user == false) {
+
             return response()->json(['message' => 'Người dùng không tồn tại'], 404);
+            $request->session()->flash('thongbao_ad', "Người dùng không tồn tại");
+            return redirect()->route('user.index');
+        }
+        user::where('id', $id)->delete();
+        $request->session()->flash('thongbao_ad', "Đã xóa người dùng");
+        return redirect()->route('user.index');
+    }
+    public function block($id)
+    {
+        $user = User::find($id);
+
+        if ($user) {
+     
+            $user->status = ($user->status == 0) ? 1 : 0;
+            $user->save();
         }
 
         User::where('id', $id)->delete();
